@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   ArrowRight,
   BookOpen,
@@ -101,13 +102,13 @@ const EventCard = ({ event }: { event: EventCardData }) => {
         {/* Spacer so the button sits at the card bottom on all rows */}
         <div className="flex-1" />
 
-        <button
-          type="button"
+        <Link
+          href={`/upcoming-events/${event._id}`}
           className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-900 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-800"
         >
           View Event
           <ArrowRight className="h-4 w-4" />
-        </button>
+        </Link>
       </div>
     </article>
   );

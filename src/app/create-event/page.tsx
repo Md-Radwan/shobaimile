@@ -17,6 +17,7 @@
 
 import { useSyncExternalStore, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { PackageCheck } from "lucide-react";
@@ -54,6 +55,8 @@ const emptySubscribe = () => () => {};
 
 export default function CreateEventPage() {
   const router = useRouter();
+  const { data: session, isPending } = useSession();
+  const userEmail = session?.user?.email ?? "";
   const [form, setForm] = useState(initialForm);
   // Client-only "today" so the min attribute doesn't cause a hydration
   // mismatch between SSR and browser (and uses local, not UTC, time).
@@ -65,6 +68,15 @@ export default function CreateEventPage() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (isPending) {
+      toast.info("Loading your session, please try again.");
+      return;
+    }
+    if (!userEmail) {
+      toast.error("You must be signed in to create an event.");
+      return;
+    }
 
     // Midnight-safe Date comparison: "today" still counts as valid.
     const [y, m, d] = form.eventDate.split("-").map(Number);
@@ -84,7 +96,7 @@ export default function CreateEventPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, email: userEmail }),
       });
 
       data = await res.json();

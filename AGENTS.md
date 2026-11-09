@@ -13,7 +13,12 @@ Social development events platform (Bangla-facing, `Plus_Jakarta_Sans` font, tit
 
 ## Event data flow (not in this repo)
 - There is **no event CRUD backend in this repo**. `src/app/create-event/page.tsx` POSTs to a **separate API server on `http://localhost:4000`** (`/create-event`). That server isn't here — look elsewhere or ask before assuming you can change backend behavior.
-- `manage-events` and `joined-events` pages are placeholder shells so far.
+- A real **`/upcoming-events` page** exists (lists events from `localhost:4000/upcoming-events`) plus an `/upcoming-events/[id]` details page (`localhost:4000/upcoming-events/${id}`). `manage-events` and `joined-events` remain placeholder shells.
+- The EventCard "View Event" button now links to `/upcoming-events/${event._id}` — it was previously a dead `<button>` with no navigation.
+- `/upcoming-events/[id]/page.tsx` fetches `localhost:4000/upcoming-events/${id}` (server component, `cache: "no-store"`) and renders the event details plus a **Join Event** button linking to `/joined-events`. Its `params` is typed as `Promise<{ id: string }>` (Next.js 16) — don't destructure it as a plain object or you'll reintroduce `TS7031`.
+- `create-event` redirects to `/` (the home route labeled "Upcoming Events" in the navbar) on success — not `/upcoming-events`. There's a dedicated `/upcoming-events` page; don't assume the redirect target without checking the Navbar link.
+- `create-event` now requires a signed-in better-auth session (`useSession`) and attaches the creator's `email` to the POST body sent to `localhost:4000/create-event` so the backend can validate ownership; unsigned-in submits are blocked with a toast. Don't remove the email field from the body.
+- `react-toastify` v11 is installed (`react-toastify/dist/ReactToastify.css` imported in `create-event`). `ToastContainer` is rendered inline on the page, not in `layout.tsx` — move it to layout if you add toasts elsewhere.
 
 ## Auth (better-auth + MongoDB)
 Three pieces to keep in sync:
