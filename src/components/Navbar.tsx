@@ -76,7 +76,7 @@ export default function Navbar() {
         {/* Center: upcoming events (desktop) */}
         <nav className="hidden flex-1 justify-center md:flex">
           <Link
-            href="/"
+            href="/upcoming-events"
             onClick={closeMenus}
             className="text-sm font-semibold text-slate-800 transition-colors hover:text-emerald-600 md:text-base"
           >
