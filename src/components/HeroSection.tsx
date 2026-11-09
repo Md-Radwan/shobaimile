@@ -65,7 +65,7 @@ export default function HeroSection() {
           {/* CTAs */}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
-              href="/"
+              href="/upcoming-events"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-800 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-900"
             >
               <ArrowRight className="h-4 w-4" />

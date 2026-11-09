@@ -218,7 +218,6 @@ export default async function UpcomingEventDetailsPage({
                   </h3>
                 </div>
                 <div className="flex items-center gap-3"> */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   {/* <img
                     src="https://i.pravatar.cc/150?img=11"
                     alt="Volunteer"
