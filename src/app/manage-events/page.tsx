@@ -11,6 +11,7 @@ import {
   Loader2,
   X,
 } from "lucide-react";
+import Image from "next/image";
 
 interface EventData {
   _id: string;
@@ -151,7 +152,7 @@ export default function ManageEventsPage() {
                 className="rounded-xl border border-border bg-white shadow-sm overflow-hidden"
               >
                 {event.imageUrl ? (
-                  <img
+                  <Image
                     src={event.imageUrl}
                     alt={event.title}
                     className="w-full h-48 object-cover"

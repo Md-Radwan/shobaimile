@@ -1,43 +1,45 @@
 # ShobaiMile
 
-Social development events platform (Bangla-facing, `Plus_Jakarta_Sans` font, title "ShobaiMile"). Single Next.js app, no monorepo.
+Social development events platform (Bangla-facing, `Plus_Jakarta_Sans` font, title "ShobaiMile"). Single Next.js app, no monorepo, no CI.
 
 ## Stack & config quirks
-- Next.js 16.4.5 (App Router, `src/app/`) + React 19. **React Compiler is enabled** (`reactCompiler: true` in `next.config.ts`).
-- Dev and build run on **Turbopack**. Tailwind v4 is set up without a config file: `globals.css` does `@import "tailwindcss"` and `next.config.ts` wires the `@tailwindcss/turbopack` loader. Style with Tailwind v4 syntax (`@theme`, etc.).
-- **Fonts**: base body font is `Plus_Jakarta_Sans` (applied as `className` on `<html>` in `layout.tsx`), but the `font-sans` / `font-heading` utilities resolve to **Geist** (`geist.variable` → `--font-sans`). Set loads via Google Fonts in `layout.tsx`; page content is Bangla — don't replace metadata text like `ShobaiMile || ছোট উদ্যোগ, বড় পরিবর্তন`.
+- Next.js 16.4.5 (App Router, `src/app/`) + React 19.3. **React Compiler is enabled** (`reactCompiler: true` in `next.config.ts`).
+- Dev and build run on **Turbopack**. Tailwind v4 has no config file: `globals.css` does `@import "tailwindcss"` and `next.config.ts` wires the `@tailwindcss/turbopack` loader. Style with Tailwind v4 syntax (`@theme`, etc.).
+- **Fonts**: base body font is `Plus_Jakarta_Sans` (applied as `className` on `<html>` in `layout.tsx`), but `font-sans` / `font-heading` resolve to **Geist** (`geist.variable` → `--font-sans`). Page content is Bangla — don't replace metadata text like `ShobaiMile || ছোট উদ্যোগ, বড় পরিবর্তন`.
 - **Two component libraries coexist**:
-  - `src/components/ui/*` are shadcn-generated primitives (style `base-nova` in `components.json`) built on `@base-ui/react`. Add new ones with `npx shadcn@latest add <component>` (aliases in `components.json`, e.g. `@/components/ui`).
-  - `@heroui/react` is used in exactly one place (`src/components/GallerySection.tsx`).
-- Both themes are imported in `globals.css`: `@import "@heroui/styles"` and `@import "shadcn/tailwind.css"`. Don't re-import create-next-app's default theme (it's commented out in `globals.css`).
+  - `src/components/ui/*` are shadcn-generated primitives (style `base-nova` in `components.json`) built on `@base-ui/react`. Add new ones with `npx shadcn@latest add <component>` (aliases like `@/components/ui` are in `components.json`).
+  - `@heroui/react` is imported directly in 5 files: `GallerySection`, `AuthLinks`, `sign-in/page`, `sign-up/page`, `upcoming-events/page`.
+- Both themes are imported in `globals.css`: `@import "@heroui/styles"` and `@import "shadcn/tailwind.css"`. create-next-app's default theme is commented out there — don't re-import it.
+- `cn` is the **npm package `"cn"`** (re-exported by `@/lib/utils`); shadcn components import `from "cn"` directly. It is not the usual clsx + tailwind-merge helper.
+- Toasts: `layout.tsx` renders a global `<ToastContainer />`, and `create-event` and `manage-events` each render another one (each also imports `react-toastify/dist/ReactToastify.css`). If you touch toasts, consolidate the containers — don't add a fourth.
 
-## Event data flow (not in this repo)
-- There is **no event CRUD backend in this repo**. `src/app/create-event/page.tsx` POSTs to a **separate API server on `http://localhost:4000`** (`/create-event`). That server isn't here — look elsewhere or ask before assuming you can change backend behavior.
-- A real **`/upcoming-events` page** exists (lists events from `localhost:4000/upcoming-events`) plus an `/upcoming-events/[id]` details page (`localhost:4000/upcoming-events/${id}`). `joined-events` remains a placeholder shell.
-- `manage-events` is a client component (`"use client"`) that fetches `localhost:4000/upcoming-events`, filters to the signed-in user's events (by `email`), and supports inline **update** (PUT `localhost:4000/update-event/${id}`) and **delete** (DELETE `localhost:4000/delete-event/${id}`). Ownership is enforced client-side by comparing `event.email` to `session?.user?.email` — unsigned-in users see a sign-in prompt. Uses `useSession` directly (not `RequireAuth`, which is commented out).
-- The EventCard "View Event" button now links to `/upcoming-events/${event._id}` — it was previously a dead `<button>` with no navigation.
-- `/upcoming-events/[id]/page.tsx` fetches `localhost:4000/upcoming-events/${id}` (server component, `cache: "no-store"`) and renders the event details plus a **Join Event** button linking to `/joined-events`. Its `params` is typed as `Promise<{ id: string }>` (Next.js 16) — don't destructure it as a plain object or you'll reintroduce `TS7031`.
-- `create-event` redirects to `/` (the home route labeled "Upcoming Events" in the navbar) on success — not `/upcoming-events`. There's a dedicated `/upcoming-events` page; don't assume the redirect target without checking the Navbar link.
-- `create-event` now requires a signed-in better-auth session (`useSession`) and attaches the creator's `email` to the POST body sent to `localhost:4000/create-event` so the backend can validate ownership; unsigned-in submits are blocked with a toast. Don't remove the email field from the body.
-- `react-toastify` v11 is installed (`react-toastify/dist/ReactToastify.css` imported in `create-event`). `ToastContainer` is rendered inline on the page, not in `layout.tsx` — move it to layout if you add toasts elsewhere.
+## Event data flow (backend is NOT in this repo)
+- There is **no event CRUD backend in this repo**. `src/app/create-event/page.tsx` POSTs to a **separate API server on `http://localhost:4000`** (`/create-event`). That server lives elsewhere — ask before assuming you can change backend behavior.
+- Pages calling `localhost:4000`: `/upcoming-events` (list), `/upcoming-events/[id]` (details, fetched with `cache: "no-store"`), `manage-events` (list + PUT `update-event/${id}` + DELETE `delete-event/${id}`). `joined-events` remains a placeholder shell.
+- `/upcoming-events/[id]/page.tsx` is a server component whose `params` is typed `Promise<{ id: string }>` (Next.js 16) — `await params`, don't destructure it as a plain object or you'll reintroduce TS7031.
+- `manage-events` is `"use client"` and enforces ownership **client-side** by comparing `event.email` to `session?.user?.email`; signed-out users get a "must be signed in" message. There is **no middleware anywhere** — a comment in `upcoming-events/page.tsx` claims `/create-event` is middleware-protected, but it isn't; `create-event` blocks unsigned-in submits itself with a toast.
+- `create-event` requires a signed-in session (`useSession`) and attaches the creator's `email` to the POST body so the backend can validate ownership — don't remove that field.
+- `create-event` redirects to `/` on success. The navbar is inconsistent: the desktop "Upcoming Events" link goes to `/upcoming-events`, the mobile menu labels `/` as "Upcoming Events", and `/` is the marketing landing page (Hero/Feature/Gallery/Newsletter) with **no event list**. Check the Navbar before assuming any redirect target.
+- EventCard's "View Event" links to `/upcoming-events/${event._id}`; the details page's Join Event button links to `/joined-events`.
 
 ## Auth (better-auth + MongoDB)
 Three pieces to keep in sync:
-- Server session: `src/lib/auth.ts` (`betterAuth` + `@better-auth/mongo-adapter`, direct `MongoClient` on `MONGODB_URI`)
+- Server session: `src/lib/auth.ts` (`betterAuth` + `mongodbAdapter` from `better-auth/adapters/mongodb`, direct `MongoClient` on `MONGODB_URI`, db `shobaimile`, google/github social providers)
 - Route handler: `src/app/api/auth/[...all]/route.ts`
 - Client: `src/lib/auth-client.ts` (`better-auth/react`)
 
-- Required env (`.env`, already present — do not delete or rewrite it): `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL=http://localhost:3000`, `MONGODB_URI`.
-- `authClient`'s `baseURL` is hardcoded to `http://localhost:3000` — change it if the port changes.
-- Known wart: `auth-client.ts` creates the client twice and exports actions from the second instance; use the existing exports (`signIn`, `signUp`, `signOut`, `useSession`) instead of adding another `createAuthClient`.
+- Required env (`.env` present and gitignored — do not delete or rewrite): `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL=http://localhost:3000`, `MONGODB_URI`, plus `BETTER_AUTH_GOOGLE_CLIENT_ID/SECRET` and `BETTER_AUTH_GITHUB_CLIENT_ID/SECRET` for the social login buttons.
+- The `@better-auth/mongo-adapter` package in deps is only referenced by a commented-out block — the live code uses `better-auth/adapters/mongodb`.
+- Known wart: `auth-client.ts` calls `createAuthClient` twice; all app code imports the named exports (`signIn`, `signUp`, `signOut`, `useSession`) from the **second** instance. The exported `authClient` (first instance) hardcodes `baseURL: "http://localhost:3000"` but is currently unused. Don't add a third client.
 
 ## Commands
-- `npm run dev` — dev server (Turbopack). `npm run build` / `npm start`. `npm run lint` runs bare `eslint` (flat config, `eslint-config-next` + TypeScript preset).
-- There is **no test runner or `typecheck` script**. To verify types before commit: `npx tsc --noEmit`.
-- Only verified cross-check before commit: `npm run lint` + `npx tsc --noEmit`.
+- `npm run dev` — dev server (Turbopack). `npm run build` / `npm start`. `npm run lint` runs bare `eslint` (flat config: `eslint-config-next` core-web-vitals + typescript preset).
+- **No test runner and no `typecheck` script.** Verify types with `npx tsc --noEmit` — it currently passes.
+- **`npm run lint` currently exits 1 with 2 pre-existing errors** — `react-hooks/set-state-in-effect` in `src/components/ui/carousel.tsx` and `src/hooks/use-mobile.ts` (plus 3 unused-var warnings). Those files aren't yours to fix; confirm your own files are clean instead of chasing them.
+- Pre-commit cross-check: `npx tsc --noEmit` + `npm run lint` (expecting only the errors above).
 
-## Known broken state
-- `src/components/RequireAuth.tsx` is **entirely commented out**, so `npx tsc --noEmit` fails out of the box with 2 errors (`joined-events/page.tsx` and `manage-events/page.tsx` import it). Unwrap the commented implementation if the private-route guard is needed; don't assume the import works.
+## Known state
+- `src/components/RequireAuth.tsx` is **entirely commented out** and imported nowhere — pages guard with `useSession` directly. If a private-route guard is needed, unwrap its commented implementation; don't assume the import works.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
