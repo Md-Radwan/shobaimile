@@ -95,7 +95,7 @@ export default function Navbar() {
                 onClick={handleLogout}
                 className="rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200"
               >
-                Logout
+                Sign Out
               </button>
 
               {/* Profile picture with dropdown */}
@@ -158,11 +158,11 @@ export default function Navbar() {
             </>
           ) : (
             <Link
-              href="/login"
+              href="/sign-in"
               onClick={closeMenus}
               className="rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200"
             >
-              Login
+              Sign In
             </Link>
           )}
         </div>
@@ -236,16 +236,16 @@ export default function Navbar() {
                     onClick={handleLogout}
                     className="shrink-0 rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200"
                   >
-                    Logout
+                    Sign Out
                   </button>
                 </div>
               ) : (
                 <Link
-                  href="/login"
+                  href="/sign-in"
                   onClick={closeMenus}
                   className="block rounded-md bg-slate-100 px-4 py-2 text-center text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200"
                 >
-                  Login
+                  Sign In
                 </Link>
               )}
             </div>
