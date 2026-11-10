@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowUp, Clock, Mail, MapPin } from "lucide-react";
+import { ArrowUp, Clock, Mail, MapPin } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const exploreLinks = [
@@ -38,8 +38,6 @@ const contactRows: {
   },
 ];
 
-// Placeholder social profiles — swap href="#" for the real URLs.
-const socials = ["Facebook", "YouTube", "LinkedIn"];
 
 function LinkList({
   links,
