@@ -77,7 +77,7 @@ export default async function UpcomingEventDetailsPage({
           <img
             src={event.imageUrl}
             alt={event.title}
-            className="w-full h-[400px] object-cover"
+            className="w-full h-100 object-cover"
           />
           {/* Event type badge */}
           <span className="absolute left-6 top-6 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-900 shadow-sm backdrop-blur-sm">
@@ -86,7 +86,7 @@ export default async function UpcomingEventDetailsPage({
           </span>
 
           {/* Title overlay on image bottom */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent"></div>
           <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
             <div className="flex items-center gap-2 text-sm font-medium text-white mt-2">
               <MapPin className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
