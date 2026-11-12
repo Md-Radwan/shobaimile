@@ -46,7 +46,7 @@ export default function ManageEventsPage() {
 
   const fetchEvents = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:4000/upcoming-events", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upcoming-events`, {
         cache: "no-store",
       });
       if (!res.ok) throw new Error("Failed to load events");
@@ -71,7 +71,7 @@ export default function ManageEventsPage() {
     if (!editForm) return;
     setSavingId(id);
     try {
-      const res = await fetch(`http://localhost:4000/update-event/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/update-event/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editForm),
@@ -92,7 +92,7 @@ export default function ManageEventsPage() {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
     setDeletingId(id);
     try {
-      const res = await fetch(`http://localhost:4000/delete-event/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/delete-event/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Delete failed");

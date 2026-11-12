@@ -28,7 +28,7 @@ export default async function UpcomingEventDetailsPage({
   let error = "";
 
   try {
-    const res = await fetch(`http://localhost:4000/upcoming-events/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upcoming-events/${id}`, {
       cache: "no-store",
     });
     if (!res.ok) throw new Error("Failed to load event");

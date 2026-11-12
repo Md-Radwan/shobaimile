@@ -4,7 +4,7 @@ import { Button } from "@heroui/react";
 import { PlusCircle } from "lucide-react";
 
 const UpcomingEventPage = async () => {
-  const res = await fetch("http://localhost:4000/upcoming-events");
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upcoming-events`);
   const events: EventCardData[] = await res.json();
 
   return (

@@ -254,7 +254,7 @@ const SignUpPage = () => {
                 value={confirmPassword}
                 // onChange={setConfirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="আবার লিখুন"
+                placeholder="Try again"
                 className="h-10 w-full rounded-lg border border-[#dfe7df] bg-transparent px-3 text-sm outline-none transition focus-within:border-[#07883e] focus-within:ring-2 focus-within:ring-[#07883e]/10"
               />
 
@@ -281,7 +281,7 @@ const SignUpPage = () => {
           {/* Divider */}
           <div className="my-4 flex items-center gap-3">
             <div className="h-px flex-1 bg-[#dfe5df]" />
-            <span className="text-xs text-[#737b74]">অথবা</span>
+            <span className="text-xs text-[#737b74]">Or</span>
             <div className="h-px flex-1 bg-[#dfe5df]" />
           </div>
 

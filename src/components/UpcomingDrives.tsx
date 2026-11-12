@@ -5,7 +5,7 @@ const UpcomingDrives = async () => {
   // ?limit=6 → next 6 upcoming events (future dates, soonest first)
   // via MongoDB .limit() on the API server. no-store so events created
   // through the Create Event page show up without a rebuild.
-  const res = await fetch("http://localhost:4000/upcoming-events?limit=6", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upcoming-events?limit=6`, {
     cache: "no-store",
   });
   const events: EventCardData[] = await res.json();
