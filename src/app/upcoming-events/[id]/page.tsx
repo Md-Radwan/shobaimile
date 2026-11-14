@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { CalendarClock, MapPin, Users, Share2 } from "lucide-react";
+import EventDetailsOrganizerCard from "@/components/EventDetailsOrganizerCard";
+// import { useSession } from "@/lib/auth-client";
+// import { authClient } from "@/lib/auth-client";
 
 export interface EventData {
   _id: string;
@@ -20,8 +23,10 @@ interface PageProps {
 }
 
 export default async function UpcomingEventDetailsPage({
+
   params,
 }: PageProps) {
+// const { data: session, isPending } = authClient.useSession();
   const { id } = await params;
 
   let event: EventData | null = null;
@@ -185,47 +190,9 @@ export default async function UpcomingEventDetailsPage({
 
             {/* Right column: Organizer + Confirmed Volunteers */}
             <div className="lg:col-span-5 space-y-6">
-              <section className="bg-slate-50 rounded-xl border border-slate-200 p-5">
-                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">
-                  Initiative Organizer
-                </h3>
-                <div className="flex items-center gap-3 mb-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="https://i.pravatar.cc/150?img=11"
-                    alt="Organizer"
-                    className="h-10 w-10 rounded-full object-cover border border-slate-200"
-                  />
-                  <div>
-                    <p className="font-semibold text-slate-900">raihan</p>
-                    <p className="text-xs text-slate-500">
-                      raihan@gmail.com
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
-                  <span className="text-xs font-medium text-emerald-600">
-                    Verified Platform Member
-                  </span>
-                </div>
-              </section>
 
-              {/* <section className="bg-slate-50 rounded-xl border border-slate-200 p-5">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Confirmed Volunteers (1)
-                  </h3>
-                </div>
-                <div className="flex items-center gap-3"> */}
-                  {/* <img
-                    src="https://i.pravatar.cc/150?img=11"
-                    alt="Volunteer"
-                    className="h-10 w-10 rounded-full object-cover border border-slate-200"
-                  />
-                  <p className="text-sm font-medium text-slate-900">raihan</p>
-                </div>
-              </section> */}
+              <EventDetailsOrganizerCard/>
+
             </div>
           </div>
         </div>
